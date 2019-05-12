@@ -1,8 +1,29 @@
 import os
 import csv
 
+def get_result_string(dict_results):
+    total_votes = sum(election_results.values())
+    winning_votes = max(election_results.values())
+
+    result = ("Election Results\n" +  
+            "---------------------------\n" + 
+            f"Total Votes: {total_votes}\n" +
+            "---------------------------")
+
+    for candidate, vote_tally in election_results.items():
+        result = (result + "\n" +
+                candidate + ": " + '{:.3f}%'.format((vote_tally/total_votes)*100) + " " + str(vote_tally))
+        if vote_tally == winning_votes:
+            winner = candidate
+
+    result = (result + "\n" +
+            "---------------------------\n" + 
+            f"Winner: {winner}\n" +
+            "---------------------------")
+    return result
+
+
 election_data_csv = os.path.join("Resources", "election_data.csv")
-print(election_data_csv)
 
 with open(election_data_csv, 'r') as csvfile:
     csvreader = csv.reader(csvfile)
@@ -15,27 +36,12 @@ with open(election_data_csv, 'r') as csvfile:
             election_results[record[2]] += 1
         else:
             election_results[record[2]] = 1
-    
-print(election_results)
-print(sum(election_results.values()))
-print(vote_total)
 
-print("Election Results")
-print("--------------------------------")
-print("Total Votes: " + str(sum(election_results.values())))
-print("--------------------------------")
-print("Total: " + '{:,.2f}'.format(pnl_total))
-print("Average Change: " + '{:,.2f}'.format(avg_pnl_change))
-print("Greatest Increase in Profits: " + greatest_change["increase"]["Date"] + " " + '{:,.2f}'.format(greatest_change["increase"]["Amt_changed"]))
-print("Greatest Decrease in Profits: " + greatest_change["decrease"]["Date"] + " " + '{:,.2f}'.format(greatest_change["decrease"]["Amt_changed"]))
+result = get_result_string(election_results)
 
-# output_path = os.path.join("new.csv")
+print(result)
 
-# with open(output_path, 'w', newline='') as csvfile:
-
-#     csvwriter = csv.writer(csvfile)
-#     csvwriter.writerow(["Total Months: " + str(month_count)])
-#     csvwriter.writerow(["Total: " + '{:,.2f}'.format(pnl_total)])
-#     csvwriter.writerow(["Average Change: " + '{:,.2f}'.format(avg_pnl_change)])
-#     csvwriter.writerow(["Greatest Increase in Profits: " + greatest_change["increase"]["Date"] + " " + '{:,.2f}'.format(greatest_change["increase"]["Amt_changed"])])
-#     csvwriter.writerow(["Greatest Decrease in Profits: " + greatest_change["decrease"]["Date"] + " " + '{:,.2f}'.format(greatest_change["decrease"]["Amt_changed"])])
+output_path = os.path.join("output.txt")
+with open(output_path, 'w') as csvfile:
+     csvfile.write(result)
+     csvfile.close()    

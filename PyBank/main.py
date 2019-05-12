@@ -2,7 +2,6 @@ import os
 import csv
 
 budget_data_csv = os.path.join("Resources","budget_data.csv")
-print(budget_data_csv)
 
 with open(budget_data_csv, 'r') as csvfile:
     csvreader = csv.reader(csvfile)
@@ -46,20 +45,17 @@ with open(budget_data_csv, 'r') as csvfile:
 pnl_final = float(record[1])
 avg_pnl_change = (pnl_final - pnl_start) /month_count
 
-print("Total Months: " + str(month_count))
-print("Total: " + '{:,.2f}'.format(pnl_total))
-print("Average Change: " + '{:,.2f}'.format(avg_pnl_change))
-print("Greatest Increase in Profits: " + greatest_change["increase"]["Date"] + " " + '{:,.2f}'.format(greatest_change["increase"]["Amt_changed"]))
-print("Greatest Decrease in Profits: " + greatest_change["decrease"]["Date"] + " " + '{:,.2f}'.format(greatest_change["decrease"]["Amt_changed"]))
+result = ("\nFinancial Analysis\n" +  
+        "---------------------------\n" + 
+        "Total Months: " + str(month_count) + "\n" +
+        "Total: " + '${:,.2f}'.format(pnl_total) + "\n"
+        "Average Change: " + '${:,.2f}'.format(avg_pnl_change) + "\n"
+        "Greatest Increase in Profits: " + greatest_change["increase"]["Date"] + " " + '${:,.2f}'.format(greatest_change["increase"]["Amt_changed"]) +"\n"
+        "Greatest Decrease in Profits: " + greatest_change["decrease"]["Date"] + " " + '${:,.2f}'.format(greatest_change["decrease"]["Amt_changed"]))
+
+print(result)
 
 output_path = os.path.join("FinancialAnalysis.txt")
-
 with open(output_path, 'w') as csvfile:
-
-    csvwriter = csv.writer(csvfile, skipinitialspace=True, escapechar=' ', quoting=csv.QUOTE_NONE)
-    csvwriter.writerow(["Total Months: " + str(month_count)])
-    csvwriter.writerow(["Total: $" + '{:,.2f}'.format(pnl_total).strip('"')])
-    #csvwriter.writerow([f"Total: ${pnl_total:,.2f}"]) 
-    csvwriter.writerow(["Average Change: $" + '{:,.2f}'.format(avg_pnl_change)])
-    csvwriter.writerow(["Greatest Increase in Profits: " + greatest_change["increase"]["Date"] + " $" + '{:,.2f}'.format(greatest_change["increase"]["Amt_changed"])])
-    csvwriter.writerow(["Greatest Decrease in Profits: " + greatest_change["decrease"]["Date"] + " $" + '{:,.2f}'.format(greatest_change["decrease"]["Amt_changed"])])
+     csvfile.write(result)
+     csvfile.close()   
