@@ -31,7 +31,6 @@ session = Session(engine)
 #################################################
 app = Flask(__name__)
 
-
 #################################################
 # Flask Routes
 #################################################
@@ -107,20 +106,32 @@ def daily_tobs():
         daily_tobs.append(tob)
 
     return jsonify(daily_tobs)
-    
-    # # Query all passengers
-    # results = session.query(Passenger.name, Passenger.age, Passenger.sex).all()
 
-    # # Create a dictionary from the row data and append to a list of all_passengers
-    # all_passengers = []
-    # for name, age, sex in results:
-    #     passenger_dict = {}
-    #     passenger_dict["name"] = name
-    #     passenger_dict["age"] = age
-    #     passenger_dict["sex"] = sex
-    #     all_passengers.append(passenger_dict)
 
-    # return jsonify(all_passengers)
+@app.route("/api/v1.0<start>")
+def calc_temps_start(start_date):
+    """Return the minimum, average, and maximum temperatures for a range of dates given a <start_date>"""
+    # Perform a query to retrieve the tobs, removing nan values and sorting by date
+    result = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
+        filter(Measurement.date >= start_date).all()
+
+    # convert result into list
+    temps = list(np.ravel(result))
+
+    return jsonify(temps)
+
+
+@app.route("/api/v1.0<start>/<end>")
+def calc_temps_start_end(start_date, end_date):
+    """Return the minimum, average, and maximum temperatures for a range of dates given a <start_date> and <end_date>"""
+    # Perform a query to retrieve the tobs, removing nan values and sorting by date
+    result = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
+        filter(Measurement.date >= start_date).filter(Measurement.date <= end_date).all()
+
+    # convert result into list
+    temps = list(np.ravel(result))
+
+    return jsonify(temps)
 
 
 if __name__ == '__main__':
