@@ -12,7 +12,7 @@ import datetime as dt
 #################################################
 # Database Setup
 #################################################
-engine = create_engine("sqlite:///Resources/hawaii.sqlite")
+engine = create_engine("sqlite:///Resources/hawaii.sqlite", connect_args={'check_same_thread': False})
 
 # reflect an existing database into a new model
 Base = automap_base()
@@ -43,8 +43,8 @@ def welcome():
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
-        f"/api/v1.0<start><br/>"
-        f"/api/v1.0<start>/<end>"
+        f"/api/v1.0/search_start/<start_date><br/>"
+        f"/api/v1.0/search_start_end/<start_date>/<end_date>"
     )
 
 
@@ -108,12 +108,13 @@ def daily_tobs():
     return jsonify(daily_tobs)
 
 
-@app.route("/api/v1.0<start>")
+@app.route("/api/v1.0/search_start/<start_date>")
 def calc_temps_start(start_date):
     """Return the minimum, average, and maximum temperatures for a range of dates given a <start_date>"""
     # Perform a query to retrieve the tobs, removing nan values and sorting by date
     result = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
-        filter(Measurement.date >= start_date).all()
+        filter(Measurement.date >= start_date).\
+        group_by(Measurement.date).all()
 
     # convert result into list
     temps = list(np.ravel(result))
@@ -121,12 +122,14 @@ def calc_temps_start(start_date):
     return jsonify(temps)
 
 
-@app.route("/api/v1.0<start>/<end>")
+@app.route("/api/v1.0/search_start_end/<start_date>/<end_date>")
 def calc_temps_start_end(start_date, end_date):
     """Return the minimum, average, and maximum temperatures for a range of dates given a <start_date> and <end_date>"""
     # Perform a query to retrieve the tobs, removing nan values and sorting by date
     result = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
-        filter(Measurement.date >= start_date).filter(Measurement.date <= end_date).all()
+        filter(Measurement.date >= start_date).\
+        filter(Measurement.date <= end_date).\
+        group_by(Measurement.date).all()
 
     # convert result into list
     temps = list(np.ravel(result))
