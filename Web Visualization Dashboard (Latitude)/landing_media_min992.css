@@ -1,0 +1,41 @@
+.contain{
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+}
+.main{
+    padding-top: 40px;
+    min-width: 1100px;
+    max-width: 1500px;
+  } 
+
+.main-header{
+    font-size: 25px;
+  }
+
+section{
+    margin: 0px auto;
+    
+}
+.sec-a{
+    width: 55%;
+    max-width: 600px;
+    height: 600px;
+}
+
+.sec-b{
+    width: 45%;
+    min-width: 400px;
+    max-width: 550px;
+    height: 500px;
+}
+
+a.img-1, a.img-2, a.img-3, a.img-4{
+    width: 50%;
+    height: 35%;
+}
+
+p {
+  margin: 20px;
+  font-size: 18px;
+}
